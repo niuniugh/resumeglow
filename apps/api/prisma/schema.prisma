@@ -6,6 +6,51 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
+model User {
+  id         String   @id @default(uuid()) @db.Uuid 
+  full_name  String   
+  email      String   @unique 
+  password   String   
+  created_at DateTime @default(now()) 
+  updated_at DateTime @updatedAt 
+  resumes    Resume[] 
+}
+
+model Resume {
+  id         String   @id @default(uuid()) @db.Uuid 
+  user_id    String   @db.Uuid 
+  title      String   
+  summary    String?  
+  created_at DateTime @default(now()) 
+  updated_at DateTime @updatedAt 
+  user        User         @relation(fields: [user_id], references: [id]) 
+  educations  Education[]  
+  experiences Experience[] 
+  skills      Skill[]      
+}
+
+model Education {
+  id             String   @id @default(uuid()) @db.Uuid 
+  resume_id      String   @db.Uuid 
+  school_name    String   
+  degree         String   
+  field_of_study String   
+  start_date     DateTime 
+  end_date       DateTime? 
+  description    String?  
+  resume Resume @relation(fields: [resume_id], references: [id]) 
+}
+
+model Experience {
+  id           String   @id @default(uuid()) @db.Uuid 
+  resume_id    String   @db.Uuid 
+  company_name String   
+  job_title    String   
+  start_date   DateTime 
+  end_date     DateTime? 
+  description  String?  
+  resume Resume @relation(fields: [resume_id], references: [id]) 
+}
 
 model User {
   id         String   @id @default(uuid()) @db.Uuid 
